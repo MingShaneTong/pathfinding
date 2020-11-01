@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>PathFinding Algorithm Visualiser</title>
+		<meta name="description" content="Shows off a range of pathfinding algorithms">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/styles.css">
+
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+		<script src="js/p5.js"></script>
+	</head>
+	<body>
+		<!-- HEADER -->
+		<!-- A bar containing the name, algorthm dropdown, items and speed dropdown, new and start/stop button -->
+		<header>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+				<a class="navbar-brand" href="#">Path Finding Visualiser</a>
+
+				<div class="navbar-collapse" id="navbarSupportedContent">
+				    <ul class="navbar-nav mr-auto">
+				    	<!-- Algorithm Selection -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-transform: capitalize;">
+							Algorithm
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<button class="dropdown-item" value="depthFirst">Depth First Search</button>
+								<button class="dropdown-item" value="breadthFirst">Breadth First Search</button>
+								<button class="dropdown-item" value="dijkstra">Dijkstra Search</button>
+								<button class="dropdown-item" value="a*">A* Search</button>
+							</div>
+						</li>
+				    </ul>
+				</div>
+
+				<!-- VIEW THE HELP TEXT -->
+				<button type="button" class="btn nav-item" data-toggle="modal" data-target="#helpModal" style="padding: 0; margin-left: auto;">
+					<img src="img/help.png" alt="Help" id="help">
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="helpModalLabel">Help</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<ul>
+									<li>Navigation Bar</li>
+									<li style="list-style-type: none;">
+										<!-- Nav bar -->
+										<ul>
+											<li>Choose an Algorithm by selecting an option in the dropdown at the top of the screen.</li>
+											<li>Select the size of the cells in the grid. The grid is adjusted to fit the window size. Also note that the smaller the size, the greater the number of cells and therefore the greater memory it will consume. </li>
+											<li>If you are using the A* Algorithm then set the weight of the Manhattan Distance from the goal. </li>
+										</ul>
+									</li>
+
+
+									<li>The Grid</li>
+									<li style="list-style-type: none;">
+										<ul>
+											<li>The blue square is the start node.</li>
+											<li>The target is the target node.</li>
+											<li>The numbered cells are weighted cells. </li>
+											<li>The black cells are walls</li>
+											<li>The yellow cells are the visited cells and the green cells are the path cells.</li>
+											<li>To add walls, left click on a cell. </li>
+											<li>To add weighted cells, hover the mouse over a cell and use the scroll wheel to increase and decrease the weight. The weights have a range of [1-9]. </li>
+										</ul>
+									</li>
+									
+
+
+									<li>Click the begin search to start the search animations. </li>
+									<li>Click the clear search to remove the coloured cells without removing the walls and weights. </li>
+									<li>Click reset to remove the walls and weights from the grid.</li>
+									<li>You may also use the spacebar to pause and play the animations once you have deselected buttons.</li>
+									<li>Adjust the Animations slider to change the speed the animations are being shown.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+			<nav class="mini-navbar navbar navbar-dark bg-dark">
+				<form class="form-inline">
+					<span class="navbar-text" id="aps">Animations</span>
+					<input type="range" min="1" max="60" value="60" class="slider" onchange="onAPSSlider(this.value);">
+
+					<span class="spacer"></span>
+
+					<span class="navbar-text" id="aps">Cell Size</span>
+					<input type="range" min="18" max="48" value="36" class="slider" onchange="onSizeSlider(this.value);">
+
+					<span class="spacer"></span>
+
+					<span class="navbar-text" id="aps">A* Distance Weight</span>
+					<input type="range" min="0" max="1" value="0.1" step="0.1" class="slider" onchange="onAStarSlider(this.value);">
+
+					<span class="spacer"></span>
+
+					<span class="navbar-text">
+						<button type="button" class="btn btn-sm btn-outline-light" onclick="runSearch(cells, getStart(cells));">Begin Search</button>
+						<button type="button" class="btn btn-sm btn-outline-light" onclick="clearSearch();">Clear Search</button>
+						<button type="button" class="btn btn-sm btn-outline-light" onclick="newGrid();">Reset</button>
+
+					</span>
+				</form>
+			</nav>
+
+		</header>
+		<main></main>
+
+		<script src="js/canvas.js"></script>
+		<script src="js/main.js"></script>
+
+		<script src="js/obj/Action.js"></script>
+		<script src="js/obj/Cell.js"></script>
+
+		<script src="js/algo/depthFirst.js"></script>
+		<script src="js/algo/breadthFirst.js"></script>
+		<script src="js/algo/dijkstra.js"></script>
+		<script src="js/algo/astar.js"></script>
+	</body>
+</html>

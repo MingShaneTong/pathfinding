@@ -1,0 +1,27 @@
+:root {
+	--main-bg-color: blue;
+	--main-txt-color: #ffffff;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+header {
+	width: 100%;
+}
+
+.mini-navbar .navbar-text {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.spacer {
+	width: 18px;
+}
+
+canvas {
+	margin: 0;
+	padding: 0;
+}
