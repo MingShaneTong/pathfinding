@@ -9,6 +9,8 @@ class Cell {
 		this.visited = false;
 		this.path = false;
 		this.weight = 1;
+
+		this.previous = null;
 	}
 
 	setVisit(value){

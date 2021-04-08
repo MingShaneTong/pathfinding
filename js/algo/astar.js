@@ -1,80 +1,70 @@
+class AStarElem {
+	constructor(cell, previous, g, f){
+		this.cell = cell;
+		this.previous = previous;
+		this.g = g;
+		this.f = f;
+	}
+
+}
+
+
 function aStar(cells, row, col, goalRow, goalCol){
 	if(!insideCells(row, col))		return false;
-
-	var queue = [[cells[row][col]]];
+ 
+	var queue = new PriorityQueue();
+	let h = manhattan(cells[row][col], goalRow, goalCol);
+	queue.enqueue(
+		new AStarElem(cells[row][col], null, 0, h), h);
 	var visited = new Set();
-	var foundPath = null;
+	var found = null;
 
-	while(queue.length > 0 && foundPath == null){
+	while(queue.size() > 0 && found == null){
 		// look at the path
 		// get the next path of least weight
-		var path = popCheapHeuristic(queue, goalRow, goalCol);
-		var last = path[path.length-1];
+		var queueItem = queue.dequeue();
+		var elem = queueItem.element;
+		var cell = elem.cell;
 
 		// check if the last cell is the goal
-		if(last.isGoal())
-			foundPath = path;
-		else if(!visited.has(last) && !last.isWall()){
-			// look at the surrounding cells of last 
-			animations.push(new Action(last, "visit"));
-			visited.add(last);
-			// top
-			if(insideCells(last.row-1, last.col))	
-				queue.push(addToPath(path, cells[last.row-1][last.col]));
-			// right
-			if(insideCells(last.row, last.col+1))	
-				queue.push(addToPath(path, cells[last.row][last.col+1]));
-			// down
-			if(insideCells(last.row+1, last.col))	
-				queue.push(addToPath(path, cells[last.row+1][last.col]));
-			// left
-			if(insideCells(last.row, last.col-1))	
-				queue.push(addToPath(path, cells[last.row][last.col-1]));
+		if(!visited.has(cell)){
+			// visit the cell
+			animations.push(new Action(cell, "visit"));		
+			visited.add(cell);
+			cell.previous = elem.previous;
+
+			if(cell.isGoal())
+				found = cell;
+			else if(!cell.isWall()){
+				var rows = [cell.row-1, cell.row, cell.row+1, cell.row];
+				var cols = [cell.col, cell.col+1, cell.col, cell.col-1];
+
+				// check neighbours and add to fringe
+				for (var i = 0; i < 4; i++) {
+					if(insideCells(rows[i], cols[i])){
+						var c = cells[rows[i]][cols[i]];
+						if(!visited.has(c)){
+							let g = elem.g + c.weight;
+							let f = g + manhattan(c, goalRow, goalCol);
+							queue.enqueue(
+								new AStarElem(c, cell, g, f), f);
+						}
+					}
+				}
+			}
 		}
 	}
 
 	// if a path is found, add animations
-	if(foundPath != null){
-		for(var i = 0; i<foundPath.length; i++){
-			animations.push(new Action(foundPath[i], "path"));
+	if(found != null){
+		while(!found.isStart()){
+			animations.push(new Action(found, "path"));
+			found = found.previous;
 		}
+		animations.push(new Action(found, "path"));
 	}
-
 }
 
-/**
- *	returns the cheapest path in the queue which includes the heuristic
- */
-function popCheapHeuristic(queue, gR, gC){
-	// if there is only one item, no need to calculate
-	if(queue.length <= 1) 	return queue.shift();
-
-	// create list of cost
-	var costs = [];
-	// for each path
-	for (var i = 0; i < queue.length; i++) {
-		var cost = 0;
-		// check weight for each node in path
-		for(var j = 0; j < queue[i].length; j++){
-			cost += queue[i][j].getWeight();
-			cost += manhattan(queue[i][j], gR, gC);
-		}
-		costs[i] = cost;
-	}
-
-	// find the index of the cheapest
-	var cheapIndex = 0;
-	for (var i = 0; i < costs.length; i++) {
-		if(costs[cheapIndex] > costs[i]){
-			// new cheap index
-			cheapIndex = i;
-		}
-	}
-	var returnCell = queue[cheapIndex];
-	queue.splice(cheapIndex, 1)
-
-	return returnCell;
-}
 
 /**
  *	manhattan distance
