@@ -1,7 +1,6 @@
 var cells = [];
 var algo;
 var aps = 60;
-var distWeight = 0.1;
 var gridSize = 36;
 
 var rows = 0;
@@ -90,10 +89,6 @@ function onAPSSlider(value){
 function onSizeSlider(value){
     gridSize = value;
     newGrid();
-}
-
-function onAStarSlider(value){
-    distWeight = value;
 }
 
 /** 

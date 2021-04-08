@@ -57,7 +57,7 @@ function popCheapHeuristic(queue, gR, gC){
 		// check weight for each node in path
 		for(var j = 0; j < queue[i].length; j++){
 			cost += queue[i][j].getWeight();
-			cost += manhattan(queue[i][j], gR, gC) * distWeight;
+			cost += manhattan(queue[i][j], gR, gC);
 		}
 		costs[i] = cost;
 	}
